@@ -1,0 +1,16 @@
+{
+    "nos": {
+        "website": "http://feeds.nos.nl/nosnieuwsalgemeen?format=xml", 
+        "title":"title", 
+        "date":"published_parsed",
+        "text":"summary",
+        "url":"link"
+    },
+    "sdz": {
+        "website": "http://rss.sueddeutsche.de/rss/Topthemen",
+        "title": "title",
+        "date": "published_parsed",
+        "text":"summary",
+        "url": "link"
+    }
+}
