@@ -16,7 +16,6 @@ The sources are to be configured in `providers.json`.
 ## What to do
 
 * Fix time displays
-* Fix weird bug where the title does not appear
 * Add more default sources
 * Display multiple sources in one view
 * (Maybe) display local news based on geolocation

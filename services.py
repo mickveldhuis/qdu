@@ -14,10 +14,10 @@ class Service:
         pass
 
 class NewsService(Service):
-    def __init__(self, provider='nos'):
+    def __init__(self, provider, controller):
         super().__init__()
         self.provider = provider
-        self.prov_data = None
+        self.controller = controller 
     
     def get_news(self):
         self._retrieve()
@@ -25,11 +25,10 @@ class NewsService(Service):
         articles = []
 
         for art in self.data:
-
-            title = art[self.prov_data['title']]
-            date = art[self.prov_data['date']]
-            raw_text = art[self.prov_data['text']]
-            url = art[self.prov_data['url']]
+            title = art['title']
+            date = art['published'] # 'published_parsed'
+            raw_text = art['summary']
+            url = art['link']
 
             h2t = HTML2Text()
             h2t.ignore_links = True
@@ -42,7 +41,7 @@ class NewsService(Service):
 
             tmp_article = {
                 'title': title,
-                'date':  '{}:{}'.format(date.tm_hour, date.tm_min),
+                'date':  date,
                 'text': text,
                 'url': url
             }
@@ -52,10 +51,7 @@ class NewsService(Service):
         return articles
     
     def _retrieve(self):
-        with open('providers.json', 'r') as prov_file:
-            prov = json.load(prov_file)
+        prov = self.controller.get_providers()
         
-        self.prov_data = prov[self.provider]
-        
-        raw_data = fp.parse(self.prov_data['website']).entries
+        raw_data = fp.parse(prov[self.provider]['url']).entries
         self.data = raw_data

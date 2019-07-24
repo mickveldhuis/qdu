@@ -1,16 +1,52 @@
 {
     "nos": {
-        "website": "http://feeds.nos.nl/nosnieuwsalgemeen?format=xml", 
-        "title":"title", 
-        "date":"published_parsed",
-        "text":"summary",
-        "url":"link"
+        "name": "NOS",
+        "cat": "Algemeen Nieuws",
+        "url": "http://feeds.nos.nl/nosnieuwsalgemeen?format=xml"
+    },
+    "nunl": {
+        "name": "NU.nl", 
+        "cat": "",
+        "url": "https://www.nu.nl/rss"
+    },
+    "fd": {
+        "name": "Financieel Dagblad",
+        "cat": "",
+        "url": "https://fd.nl/?rss"
+    },
+    "bbc_uk": {
+        "name": "BBC",
+        "cat": "UK",
+        "url": "http://feeds.bbci.co.uk/news/rss.xml?edition=uk"
+    },
+    "tg_uk": {
+        "name": "The Guardian",
+        "cat": "UK",
+        "url": "https://www.theguardian.com/uk/rss"
+    },
+    "tg_ww": {
+        "name": "The Guardian",
+        "cat": "World",
+        "url": "https://www.theguardian.com/world/rss"
     },
     "sdz": {
-        "website": "http://rss.sueddeutsche.de/rss/Topthemen",
-        "title": "title",
-        "date": "published_parsed",
-        "text":"summary",
-        "url": "link"
+        "name": "Süddeutsche Zeitung",
+        "cat": "Top-Themen",
+        "url": "http://rss.sueddeutsche.de/rss/Topthemen"
+    },
+    "dsp_wis": {
+        "name": "Der Spiegel",
+        "cat": "Wissenschaft",
+        "url": "https://www.spiegel.de/wissenschaft/index.rss"
+    },
+    "dsp_pol": {
+        "name": "Der Spiegel",
+        "cat": "Politik",
+        "url": "https://www.spiegel.de/politik/index.rss"
+    },
+    "dsp_wirt": {
+        "name": "Der Spiegel",
+        "cat": "Wirtschaft",
+        "url": "https://www.spiegel.de/wirtschaft/index.rss"
     }
 }

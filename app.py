@@ -10,7 +10,8 @@ PALETTE = [
     ('footer', 'white', 'black', 'bold'),
     ('header', 'white', 'dark magenta', 'bold'),
     ('container', 'white', 'black'),
-    ('button', 'light magenta', 'black')
+    ('button', 'light magenta', ''),
+    ('art_title', 'light magenta', '', 'bold')
 ]
 
 class BaseView(urwid.WidgetWrap):
@@ -59,14 +60,20 @@ class UpdatesView(BaseView):
         for item in items:
             lb_content.append(self._gen_news_item(
                 item['title'], item['date'], item['text'], item['url']))
+            lb_content.append(div)
 
         self.walker[:] = lb_content
         self.listbox.set_focus(1) # Set focus to the first news item
     
     def _gen_news_item(self, title, date, text, url):
         div = urwid.Divider()
+        div_bar = urwid.Divider('-')
 
         pile = urwid.Pile([
+            div,
+            urwid.Padding(urwid.Text(('art_title', title)), align='center', width=('relative', 90)),
+            div,
+            div_bar,
             div,
             urwid.Padding(urwid.Text(text), align='center', width=('relative', 90)),
             div,
@@ -74,7 +81,7 @@ class UpdatesView(BaseView):
                                   align='center', width=('relative', 90))
         ])
 
-        item = urwid.Padding(urwid.LineBox(pile, title='{} [{}]'.format(title, date)),
+        item = urwid.Padding(urwid.LineBox(pile, title='{}'.format(date)),
                             align='center', width=('relative', 80))
 
         return item
@@ -92,7 +99,7 @@ class DailyUpdater:
             print('News source not available, please check the providers.json file!')
             self.terminate()
         
-        self.news_service = NewsService(source)
+        self.news_service = NewsService(source, self)
 
         self.view.fill_window()
 
@@ -106,13 +113,27 @@ class DailyUpdater:
             pass
 
     def is_provider(self, provider):
-        return provider in self._get_providers()
+        prov = self.get_providers()
+        return provider in [*prov.keys()]
 
-    def _get_providers(self):
+    def get_providers(self):
         with open('providers.json', 'r') as pf:
             prov = json.load(pf)
         
-        return [*prov.keys()]
+        return prov
+    
+    def list_providers(self):
+        prov = self.get_providers()
+
+        header = ' {:10} | {:24} | {:16} '.format('Source', 'Full name', 'Category')
+        bar = '-'*len(header)
+
+        print(header + '\n' + bar)
+
+        for short_name, info in prov.items():
+            print(' {:10} | {:24} | {:16} '.format(short_name, info['name'], info['cat']))
+
+        sys.exit()
     
     def terminate(self):
         sys.exit()
