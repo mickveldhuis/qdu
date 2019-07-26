@@ -12,16 +12,20 @@ def main():
     parser.add_argument('--version', '-v', action='version', version='QKU 0.0.1')
     pres = parser.parse_args()
 
+    source = pres.source
+
     up = DailyUpdater()
 
     if pres.list_sources:
         up.list_providers()
 
-    if not pres.source:
-        print('News source not specified, please use the --source flag!')
-        sys.exit()
+    if not source:
+        with open('settings.json', 'r') as sf:
+            settings = json.load(sf)
+        
+        source = settings["default"]
     
-    up.main(pres.source)
+    up.main(source)
 
 if __name__ == '__main__':
     main()

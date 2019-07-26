@@ -50,7 +50,7 @@ class UpdatesView(BaseView):
 
         return view
 
-    def fill_window(self):
+    def fill_window_single(self):
         div = urwid.Divider()
 
         lb_content = [div]
@@ -64,7 +64,7 @@ class UpdatesView(BaseView):
 
         self.walker[:] = lb_content
         self.listbox.set_focus(1) # Set focus to the first news item
-    
+
     def _gen_news_item(self, title, date, text, url):
         div = urwid.Divider()
         div_bar = urwid.Divider('-')
@@ -101,7 +101,7 @@ class DailyUpdater:
         
         self.news_service = NewsService(source, self)
 
-        self.view.fill_window()
+        self.view.fill_window_single()
 
         self.loop = urwid.MainLoop(self.view, palette=PALETTE, unhandled_input=self.key_input)
         self.loop.run()
