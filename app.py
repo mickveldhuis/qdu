@@ -55,13 +55,34 @@ class UpdatesView(BaseView):
 
         lb_content = [div]
         
-        items = self.controller.news_service.get_news()
+        items = self.controller.services[0].get_news()
 
         for item in items:
             lb_content.append(self._gen_news_item(
                 item['title'], item['date'], item['text'], item['url']))
             lb_content.append(div)
 
+        self.walker[:] = lb_content
+        self.listbox.set_focus(1) # Set focus to the first news item
+
+    def fill_window_double(self):
+        div = urwid.Divider()
+
+        lb_content = [div]
+        
+        cols = []
+
+        for service in self.controller.services:
+            widgets = []
+            items = service.get_news()
+            for item in items:
+                widgets.append(self._gen_news_item(
+                    item['title'], item['date'], item['text'], item['url']))
+                widgets.append(div)
+            cols.append(urwid.BoxAdapter(
+                        urwid.ListBox(urwid.SimpleFocusListWalker(widgets)), 50))
+        
+        lb_content.append(urwid.Columns(cols))
         self.walker[:] = lb_content
         self.listbox.set_focus(1) # Set focus to the first news item
 
@@ -92,16 +113,23 @@ class UpdatesView(BaseView):
 class DailyUpdater:
     def __init__(self):
         self.view = UpdatesView(self)
-        self.news_service = None
+        self.news_services = None
 
-    def main(self, source):
-        if not self.is_provider(source):
-            print('News source not available, please check the providers.json file!')
-            self.terminate()
+    def main(self, sources):
+        for source in sources:
+            if not self.is_provider(source):
+                print('News source [{}] not available, please check the providers.json file!'.format(source))
+                self.terminate()
         
-        self.news_service = NewsService(source, self)
-
-        self.view.fill_window_single()
+        self.services = [NewsService(source, self) for source in sources]
+        
+        if len(self.services) == 1:
+            self.view.fill_window_single()
+        elif len(self.services) == 2:
+            self.view.fill_window_double()
+        else:
+            print('Error: Maximum number of sources is TWO.')
+            sys.exit()
 
         self.loop = urwid.MainLoop(self.view, palette=PALETTE, unhandled_input=self.key_input)
         self.loop.run()

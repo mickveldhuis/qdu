@@ -12,20 +12,20 @@ def main():
     parser.add_argument('--version', '-v', action='version', version='QKU 0.0.1')
     pres = parser.parse_args()
 
-    source = pres.source
-
     up = DailyUpdater()
 
     if pres.list_sources:
         up.list_providers()
 
-    if not source:
+    if not pres.source:
         with open('settings.json', 'r') as sf:
             settings = json.load(sf)
-        
-        source = settings["default"]
-    
-    up.main(source)
+
+        source_list = [settings['default']]
+    else:
+        source_list = pres.source.split(',')
+
+    up.main(source_list)
 
 if __name__ == '__main__':
     main()
