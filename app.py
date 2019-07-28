@@ -50,39 +50,36 @@ class UpdatesView(BaseView):
 
         return view
 
-    def fill_window_single(self):
+    def fill_window(self):
         div = urwid.Divider()
 
         lb_content = [div]
-        
-        items = self.controller.services[0].get_news()
 
-        for item in items:
-            lb_content.append(self._gen_news_item(
-                item['title'], item['date'], item['text'], item['url']))
-            lb_content.append(div)
+        if len(self.controller.services) == 1:            
+            items = self.controller.services[0].get_news()
 
-        self.walker[:] = lb_content
-        self.listbox.set_focus(1) # Set focus to the first news item
-
-    def fill_window_double(self):
-        div = urwid.Divider()
-
-        lb_content = [div]
-        
-        cols = []
-
-        for service in self.controller.services:
-            widgets = []
-            items = service.get_news()
             for item in items:
-                widgets.append(self._gen_news_item(
+                lb_content.append(self._gen_news_item(
                     item['title'], item['date'], item['text'], item['url']))
-                widgets.append(div)
-            cols.append(urwid.BoxAdapter(
-                        urwid.ListBox(urwid.SimpleFocusListWalker(widgets)), 50))
-        
-        lb_content.append(urwid.Columns(cols))
+                lb_content.append(div)
+        elif len(self.controller.services) == 2:
+            cols = []
+
+            for service in self.controller.services:
+                widgets = []
+                items = service.get_news()
+                for item in items:
+                    widgets.append(self._gen_news_item(
+                        item['title'], item['date'], item['text'], item['url']))
+                    widgets.append(div)
+                cols.append(urwid.BoxAdapter(
+                            urwid.ListBox(urwid.SimpleFocusListWalker(widgets)), 50))
+
+            lb_content.append(urwid.Columns(cols))
+        else:
+            print('Error: Maximum number of sources is TWO.')
+            sys.exit()
+            
         self.walker[:] = lb_content
         self.listbox.set_focus(1) # Set focus to the first news item
 
@@ -106,7 +103,7 @@ class UpdatesView(BaseView):
                             align='center', width=('relative', 80))
 
         return item
-    
+
     def to_article(self, button, url):
         webbrowser.open(url, new=2)
 
@@ -120,16 +117,10 @@ class DailyUpdater:
             if not self.is_provider(source):
                 print('News source [{}] not available, please check the providers.json file!'.format(source))
                 self.terminate()
-        
+
         self.services = [NewsService(source, self) for source in sources]
-        
-        if len(self.services) == 1:
-            self.view.fill_window_single()
-        elif len(self.services) == 2:
-            self.view.fill_window_double()
-        else:
-            print('Error: Maximum number of sources is TWO.')
-            sys.exit()
+
+        self.view.fill_window()
 
         self.loop = urwid.MainLoop(self.view, palette=PALETTE, unhandled_input=self.key_input)
         self.loop.run()
@@ -147,9 +138,9 @@ class DailyUpdater:
     def get_providers(self):
         with open('providers.json', 'r') as pf:
             prov = json.load(pf)
-        
+
         return prov
-    
+
     def list_providers(self):
         prov = self.get_providers()
 
@@ -162,6 +153,6 @@ class DailyUpdater:
             print(' {:10} | {:24} | {:16} '.format(short_name, info['name'], info['cat']))
 
         sys.exit()
-    
+
     def terminate(self):
         sys.exit()
